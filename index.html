@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<!-- Quiz-Sprache: Deutsch (German) -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Englisch Vokabeltest</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+        }
+
+        .quiz-container {
+            display: flex;
+            flex-direction: column;           
+            gap: 10px;
+            max-width: 300px;
+        }
+
+        .question {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .error {
+            border: 2px solid red;
+            outline: none;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Vokabeltest</h2>
+    <p>Übersetze die folgenden Begriffe ins Englische:</p>
+
+    <div id="quiz-fields" class="quiz-container">
+    </div>
+
+    <button type="button" onclick="checkAnswers()">Überprüfen</button>
+    <div id="result"></div>
+
+    <script>
+        // Das Dictionary mit den Vokabeln (Deutsch: [Englisch1, Englisch2])
+
+        const vocabulary = {
+
+            "klettern": ["to climb"],
+
+            "hüpfen": ["to jump"],
+
+            "verlassen/weggehen": ["to leave"],
+
+            "Spiegel": ["mirror"],
+
+            "aufsetzen/anziehen": ["to put on", "to wear"],
+
+            "weg": ["away"],
+
+            "beste": ["best"],
+
+            "DetektivIn": ["detective"],
+
+            "Hilf mir!": ["help me!"],
+
+            "suchen": ["to search", "to look for"],
+
+            "alt": ["old"],
+
+            "aufheben": ["to pick up"],
+
+            "hinausrennen (aus)": ["to run out (of)"],
+
+            "die Straße hinunterlaufen": ["to run down the street"],
+
+            "finden": ["to find"],
+
+            "ziehen": ["to pull"],
+
+            "fangen/erwischen/festnehmen": ["to catch"],
+
+            "klug/schlau": ["clever", "smart"],
+
+            "(zu etwas) hinkommen": ["to come to (something)"],
+
+            "leben/wohnen": ["to live"],
+
+            "Pfeife": ["pipe"],
+
+            "rauchen": ["to smoke"],
+
+            "lösen": ["to solve"],
+
+            "geige": ["violin"],
+
+            "warten": ["to wait"],
+
+            "beobachten/zuschauen": ["to observe", "to watch"],
+
+            "Straße": ["street"],
+
+            "aufstehen": ["to get up"],
+
+            "werden": ["to become"],
+
+            "Erzähle weiter!": ["Go on!"],
+
+            "Gut gemacht!": ["Well done!"],
+
+            "Aber es stimmt!": ["But it's true!"],
+
+            "viel(-e) / jede Menge": ["a lot of / lots of"],
+
+            "(an)rufen": ["to call"],
+
+            "Komm jetzt!/Mach schon!": ["Come on!"]
+
+        };
+
+
+        // 1. Felder beim Laden der Seite erstellen
+        const container = document.getElementById('quiz-fields');
+
+        for (const [german, answers] of Object.entries(vocabulary)) {
+            const div = document.createElement('div');
+            div.className = 'question';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'quiz-input';
+            input.dataset.correct = JSON.stringify(answers);
+            div.appendChild(document.createTextNode(german + ': '));
+            div.appendChild(input);
+            container.appendChild(div);
+        }
+
+        // 2. Prüf-Logik
+        function normalizeAnswer(answer) {
+            return answer.trim().toLowerCase().replace(/[!?.]/g, '');
+        }
+
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('.quiz-input');
+            let correctCount = 0;
+
+            inputs.forEach(input => {
+                const userAnswer = normalizeAnswer(input.value);
+                const allowedAnswers = JSON.parse(input.getAttribute('data-correct'));
+                
+                const isCorrect = allowedAnswers.some(answer => 
+                    normalizeAnswer(answer) === userAnswer
+                );
+
+                if (isCorrect) {
+                    correctCount++;
+                    input.classList.remove('error');
+                } else {
+                    input.classList.add('error');
+                }
+            });
+
+            document.getElementById('result').innerText =
+                `Ergebnis: ${correctCount} von ${Object.keys(vocabulary).length} richtig.`;
+        }
+    </script>
+</body>
+
+</html>
