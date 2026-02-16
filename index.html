@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="de">
 <!-- Quiz-Sprache: Deutsch (German) -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Englisch Vokabeltest</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
             margin: 40px;
         }
 
         .quiz-container {
             display: flex;
-            flex-direction: column;           
+            flex-direction: column;
             gap: 10px;
             max-width: 300px;
         }
@@ -24,12 +25,16 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
+            font-size: 1.1em;
+            color: #111;
         }
 
         input {
             padding: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 1em;
+            color:#111
         }
 
         .error {
@@ -44,15 +49,26 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 20px 20px;
             border-radius: 5px;
-            margin-top: 20px;
+            margin: 20px auto 0;
             width: 60%;
             background-color: #214322;
             color: white;
             font-size: medium;
             border: none;
             cursor: pointer;
+        }
+        #btn-answer {
+            background-color: #627b63;
+            width: 30%;
+        }
+
+        .solution-text {
+            font-size: 0.9em;
+            color: #807373;
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -65,8 +81,11 @@
     <div id="quiz-fields" class="quiz-container">
     </div>
 
+
     <button type="button" onclick="checkAnswers()">Überprüfen</button>
     <div id="result"></div>
+    <button type="button" onclick="showAnswers()" id="btn-answer">Lösungen anzeigen</button>
+
 
     <script>
         // Das Dictionary mit den Vokabeln (Deutsch: [Englisch1, Englisch2])
@@ -137,7 +156,7 @@
 
             "Gut gemacht!": ["Well done!"],
 
-            "Aber es stimmt!": ["But it is true!"],
+            "Aber es stimmt!": ["But it's true!"],
 
             "viel(-e) / jede Menge": ["a lot of / lots of"],
 
@@ -175,8 +194,8 @@
             inputs.forEach(input => {
                 const userAnswer = normalizeAnswer(input.value);
                 const allowedAnswers = JSON.parse(input.getAttribute('data-correct'));
-                
-                const isCorrect = allowedAnswers.some(answer => 
+
+                const isCorrect = allowedAnswers.some(answer =>
                     normalizeAnswer(answer) === userAnswer
                 );
 
@@ -190,6 +209,32 @@
 
             document.getElementById('result').innerText =
                 `Ergebnis: ${correctCount} von ${Object.keys(vocabulary).length} richtig.`;
+        }
+
+        function showAnswers() {
+            const inputs = document.querySelectorAll('.quiz-input');
+
+            inputs.forEach(input => {
+                // Die hinterlegten Antworten aus dem Attribut holen
+                const allowedAnswers = JSON.parse(input.getAttribute('data-correct'));
+
+                // Prüfen, ob bereits eine Lösung angezeigt wird, um Dopplungen zu vermeiden
+                let solutionDisplay = input.parentElement.querySelector('.solution-text');
+                const btnText = document.getElementById('btn-answer');
+
+                if (!solutionDisplay) {
+                    solutionDisplay = document.createElement('div');
+                    solutionDisplay.className = 'solution-text';
+                    // Wir zeigen die erste Antwortmöglichkeit aus dem Array
+                    solutionDisplay.innerText = allowedAnswers[0];
+                    input.parentElement.appendChild(solutionDisplay);
+                    btnText.innerText = 'Lösungen verbergen';
+                } else {
+                    // Wenn die Lösung bereits angezeigt wird, entfernen wir sie
+                    solutionDisplay.remove();
+                    btnText.innerText = 'Lösungen anzeigen';
+                }
+            });
         }
     </script>
 </body>
